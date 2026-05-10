@@ -12,22 +12,38 @@ if (isset($_POST['registerUserBtn'])) {
 	$first_name = sanitizeInput($_POST['first_name']);
 	$last_name = sanitizeInput($_POST['last_name']);
 	$date_of_birth = sanitizeInput($_POST['date_of_birth']);
-	$password = password_hash($_POST['password'], PASSWORD_DEFAULT); // password is not sanitized because it gets hashed
+	$password = $_POST['password'];
+	$confirm_password = $_POST['confirm_password'];
 
-	if (!empty($username) && !empty($first_name) && !empty($last_name) && !empty($date_of_birth) && !empty($password)) {
+	if (!empty($username) && !empty($first_name) && !empty($last_name) && !empty($date_of_birth) && !empty($password) && !empty($confirm_password)) {
 
-		$insertQuery = insertNewUser($pdo, $username, $first_name, $last_name, $date_of_birth, $password);
+		// check if both passwords match first
+		if ($password == $confirm_password) {
 
-		if ($insertQuery) {
-			header("Location: ../login.php");
-			exit();
+			// validate if the password is secure enough (minimum of 8 characters, uppercase, lowercase, and numbers)
+			if (validatePassword($password)) {
+
+				$insertQuery = insertNewUser($pdo, $username, $first_name, $last_name, $date_of_birth, password_hash($password, PASSWORD_DEFAULT));
+
+				if ($insertQuery) {
+					header("Location: ../login.php");
+					exit();
+				} else {
+					header("Location: ../register.php");
+					exit();
+				}
+			} else {
+				$_SESSION['message'] = "Password should be a minimum of 8 characters and should contain both uppercase, lowercase, and numbers";
+				header("Location: ../register.php");
+				exit();
+			}
 		} else {
+			$_SESSION['message'] = "Please check if both passwords are equal!";
 			header("Location: ../register.php");
 			exit();
 		}
 	} else {
-		$_SESSION['message'] = "Please make sure the input fields 
-		are not empty for registration!";
+		$_SESSION['message'] = "Please make sure the input fields are not empty for registration!";
 
 		header("Location: ../register.php");
 		exit();
