@@ -23,8 +23,8 @@ if (!isset($_SESSION['username'])) {
 	</nav>
 
 	<?php $getAllInfoByCustomerID = getCustomerByID($pdo, $_GET['customer_id']); ?>
-	<h1>Username: <?php echo $getAllInfoByCustomerID['username']; ?></h1>
-	<h1>Add New Session</h1>
+	<h2>Username: <?php echo $getAllInfoByCustomerID['username']; ?></h2>
+	<h2>Add New Session</h2>
 	<form action="core/handleForms.php?customer_id=<?php echo $_GET['customer_id']; ?>" method="POST">
 		<p>
 			<label for="pcNumber">PC Number</label>

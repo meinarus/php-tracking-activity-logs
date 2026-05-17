@@ -25,7 +25,7 @@ if (!isset($_SESSION['username'])) {
 	<?php }
 	unset($_SESSION['message']); ?>
 
-	<h1>Hello there, <?php echo $_SESSION['username']; ?>!</h1>
+	<h2>Hello there, <?php echo $_SESSION['username']; ?>!</h2>
 	<nav>
 		<a href="core/handleForms.php?logoutAUser=1">Logout</a>
 		<!-- link to the activity logs page so users can view all recorded actions -->
@@ -42,7 +42,7 @@ if (!isset($_SESSION['username'])) {
 		<?php } ?>
 	</ul>
 
-	<h1>Add new Customers!</h1>
+	<h2>Add new Customers!</h2>
 	<form action="core/handleForms.php" method="POST">
 		<p>
 			<label for="username">Username</label>

@@ -24,10 +24,13 @@ if (!isset($_SESSION['username'])) {
 
 	<?php $getUserByID = getUserByID($pdo, $_GET['user_id']); ?>
 	<h1>Username: <?php echo $getUserByID['username']; ?></h1>
-	<h1>First Name: <?php echo $getUserByID['first_name']; ?></h1>
-	<h1>Last Name: <?php echo $getUserByID['last_name']; ?></h1>
-	<h1>Date of Birth: <?php echo $getUserByID['date_of_birth']; ?></h1>
-	<h1>Date Joined: <?php echo $getUserByID['date_added']; ?></h1>
+	<div class="card">
+		<p><strong>First Name:</strong> <?php echo $getUserByID['first_name']; ?></p>
+		<p><strong>Last Name:</strong> <?php echo $getUserByID['last_name']; ?></p>
+		<p><strong>Date of Birth:</strong> <?php echo $getUserByID['date_of_birth']; ?></p>
+		<p><strong>Date Joined:</strong> <?php echo $getUserByID['date_added']; ?></p>
+	</div>
+
 </body>
 
 </html>
