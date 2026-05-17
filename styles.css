@@ -26,8 +26,8 @@ nav {
   box-sizing: border-box;
 }
 
-
-form, .card {
+form,
+.card {
   background-color: #171717;
   border: 1px solid #262626;
   border-radius: 1rem;
@@ -76,7 +76,6 @@ h3 {
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
-
 
 p {
   color: #d4d4d4;
@@ -268,4 +267,9 @@ h1[style*="color: red;"] {
 .search-form input[type="submit"] {
   width: auto;
   margin-top: 0;
+}
+
+/* spacing for the rental sessions search results section */
+.session-results {
+  margin-top: 2.5rem;
 }

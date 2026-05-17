@@ -63,11 +63,11 @@ if (!isset($_SESSION['username'])) {
 		</p>
 	</form>
 
-	<!-- search form for customers: submits a GET request so results show on this page -->
-	<h3>Search Customers</h3>
+	<!-- search form: searches both customers and rental sessions -->
+	<h3>Search Customers & Rental Sessions</h3>
 	<form action="index.php" method="GET" class="search-form">
 		<p>
-			<label for="search">Search by username, name, or status</label>
+			<label for="search">Search by username, name, status, PC number, or hours</label>
 			<input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
 			<input type="submit" value="Search">
 		</p>
@@ -82,6 +82,9 @@ if (!isset($_SESSION['username'])) {
 		$getAllCustomers = getAllCustomers($pdo);
 	}
 	?>
+	<?php if (isset($_GET['search']) && !empty($_GET['search'])) { ?>
+		<h3>Customers Results</h3>
+	<?php } ?>
 	<table>
 		<tr>
 			<th>Username</th>
@@ -112,6 +115,43 @@ if (!isset($_SESSION['username'])) {
 			</tr>
 		<?php } ?>
 	</table>
+
+	<?php
+	// if a search keyword is provided, also show matching rental sessions
+	if (isset($_GET['search']) && !empty($_GET['search'])) {
+		$searchedSessions = searchSessions($pdo, $searchKeyword);
+	?>
+		<h3 class="session-results">Rental Sessions Results</h3>
+		<table>
+			<tr>
+				<th>Session ID</th>
+				<th>PC Number</th>
+				<th>Hours Rented</th>
+				<th>Customer</th>
+				<th>Added By</th>
+				<th>Date Added</th>
+				<th>Updated By</th>
+				<th>Last Updated</th>
+				<th>Action</th>
+			</tr>
+			<?php foreach ($searchedSessions as $session) { ?>
+				<tr>
+					<td><?php echo $session['session_id']; ?></td>
+					<td><?php echo $session['pc_number']; ?></td>
+					<td><?php echo $session['hours_rented']; ?></td>
+					<td><?php echo $session['customer']; ?></td>
+					<td><?php echo $session['added_by']; ?></td>
+					<td><?php echo $session['date_added']; ?></td>
+					<td><?php echo $session['updated_by']; ?></td>
+					<td><?php echo $session['last_updated']; ?></td>
+					<td>
+						<a href="editRentalSession.php?session_id=<?php echo $session['session_id']; ?>&customer_id=<?php echo $session['customer_id']; ?>">Edit</a>
+						<a href="deleteRentalSession.php?session_id=<?php echo $session['session_id']; ?>&customer_id=<?php echo $session['customer_id']; ?>">Delete</a>
+					</td>
+				</tr>
+			<?php } ?>
+		</table>
+	<?php } ?>
 </body>
 
 </html>

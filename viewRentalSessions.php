@@ -62,10 +62,10 @@ if (!isset($_SESSION['username'])) {
 			<th>Action</th>
 		</tr>
 		<?php
-		// if a search keyword is provided, use searchSessions instead of getSessionsByCustomer
+		// if a search keyword is provided, use searchCustomerSessions instead of getSessionsByCustomer
 		if (isset($_GET['search']) && !empty($_GET['search'])) {
 			$searchKeyword = sanitizeInput($_GET['search']);
-			$getSessionsByCustomer = searchSessions($pdo, $searchKeyword, $_GET['customer_id']);
+			$getSessionsByCustomer = searchCustomerSessions($pdo, $searchKeyword, $_GET['customer_id']);
 		} else {
 			$getSessionsByCustomer = getSessionsByCustomer($pdo, $_GET['customer_id']);
 		}
