@@ -30,3 +30,15 @@ CREATE TABLE rental_sessions (
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+CREATE TABLE activity_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    action_type VARCHAR(50),
+    entity_type VARCHAR(50),
+    record_id INT,
+    field_changed VARCHAR(255),
+    old_value VARCHAR(255),
+    new_value VARCHAR(255),
+    date_logged TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

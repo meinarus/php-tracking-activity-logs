@@ -98,6 +98,11 @@ if (isset($_POST['insertCustomerBtn'])) {
 	);
 
 	if ($query) {
+		// log the insert action into activity_logs table
+		$fields = "first_name, last_name, username, membership_status";
+		$newValues = $firstName . ", " . $lastName . ", " . $username . ", " . $membershipStatus;
+		insertActivityLog($pdo, $_SESSION['username'], "INSERT", "Customer", $pdo->lastInsertId(), $fields, "-", $newValues);
+
 		header("Location: ../index.php");
 		exit();
 	} else {
@@ -112,6 +117,9 @@ if (isset($_POST['editCustomerBtn'])) {
 	$lastName = sanitizeInput($_POST['lastName']);
 	$membershipStatus = sanitizeInput($_POST['membershipStatus']);
 
+	// get the old customer data before updating so we can log what changed
+	$oldCustomer = getCustomerByID($pdo, $_GET['customer_id']);
+
 	$query = updateCustomer(
 		$pdo,
 		$username,
@@ -122,6 +130,37 @@ if (isset($_POST['editCustomerBtn'])) {
 	);
 
 	if ($query) {
+		// compare old and new values to find which fields actually changed
+		$changedFields = [];
+		$oldValues = [];
+		$newValues = [];
+
+		if ($oldCustomer['first_name'] != $firstName) {
+			$changedFields[] = "first_name";
+			$oldValues[] = $oldCustomer['first_name'];
+			$newValues[] = $firstName;
+		}
+		if ($oldCustomer['last_name'] != $lastName) {
+			$changedFields[] = "last_name";
+			$oldValues[] = $oldCustomer['last_name'];
+			$newValues[] = $lastName;
+		}
+		if ($oldCustomer['username'] != $username) {
+			$changedFields[] = "username";
+			$oldValues[] = $oldCustomer['username'];
+			$newValues[] = $username;
+		}
+		if ($oldCustomer['membership_status'] != $membershipStatus) {
+			$changedFields[] = "membership_status";
+			$oldValues[] = $oldCustomer['membership_status'];
+			$newValues[] = $membershipStatus;
+		}
+
+		// only log if something actually changed
+		if (!empty($changedFields)) {
+			insertActivityLog($pdo, $_SESSION['username'], "UPDATE", "Customer", $_GET['customer_id'], implode(", ", $changedFields), implode(", ", $oldValues), implode(", ", $newValues));
+		}
+
 		header("Location: ../index.php");
 		exit();
 	} else {
@@ -130,9 +169,17 @@ if (isset($_POST['editCustomerBtn'])) {
 }
 
 if (isset($_POST['deleteCustomerBtn'])) {
+	// get customer details before deleting so we can log it properly
+	$customerToDelete = getCustomerByID($pdo, $_GET['customer_id']);
+
 	$query = deleteCustomer($pdo, $_GET['customer_id']);
 
 	if ($query) {
+		// log the delete action into activity_logs table
+		$fields = "first_name, last_name, username";
+		$oldValues = $customerToDelete['first_name'] . ", " . $customerToDelete['last_name'] . ", " . $customerToDelete['username'];
+		insertActivityLog($pdo, $_SESSION['username'], "DELETE", "Customer", $_GET['customer_id'], $fields, $oldValues, "-");
+
 		header("Location: ../index.php");
 		exit();
 	} else {
@@ -153,6 +200,15 @@ if (isset($_POST['insertNewSessionBtn'])) {
 	);
 
 	if ($query) {
+		// get the new session id right away before any other query resets it
+		$newSessionId = $pdo->lastInsertId();
+
+		// get customer name to include in the activity log
+		$customer = getCustomerByID($pdo, $_GET['customer_id']);
+		$fields = "pc_number, hours_rented, customer";
+		$newValues = $pcNumber . ", " . $hoursRented . ", " . $customer['first_name'] . " " . $customer['last_name'];
+		insertActivityLog($pdo, $_SESSION['username'], "INSERT", "Rental Session", $newSessionId, $fields, "-", $newValues);
+
 		header("Location: ../viewRentalSessions.php?customer_id=" . $_GET['customer_id']);
 		exit();
 	} else {
@@ -165,9 +221,33 @@ if (isset($_POST['editSessionBtn'])) {
 	$pcNumber = sanitizeInput($_POST['pcNumber']);
 	$hoursRented = sanitizeInput($_POST['hoursRented']);
 
+	// get the old session data before updating so we can log what changed
+	$oldSession = getSessionByID($pdo, $_GET['session_id']);
+
 	$query = updateSession($pdo, $pcNumber, $hoursRented, $_GET['session_id']);
 
 	if ($query) {
+		// compare old and new values to find which fields actually changed
+		$changedFields = [];
+		$oldValues = [];
+		$newValues = [];
+
+		if ($oldSession['pc_number'] != $pcNumber) {
+			$changedFields[] = "pc_number";
+			$oldValues[] = $oldSession['pc_number'];
+			$newValues[] = $pcNumber;
+		}
+		if ($oldSession['hours_rented'] != $hoursRented) {
+			$changedFields[] = "hours_rented";
+			$oldValues[] = $oldSession['hours_rented'];
+			$newValues[] = $hoursRented;
+		}
+
+		// only log if something actually changed
+		if (!empty($changedFields)) {
+			insertActivityLog($pdo, $_SESSION['username'], "UPDATE", "Rental Session", $_GET['session_id'], implode(", ", $changedFields), implode(", ", $oldValues), implode(", ", $newValues));
+		}
+
 		header("Location: ../viewRentalSessions.php?customer_id=" . $_GET['customer_id']);
 		exit();
 	} else {
@@ -176,9 +256,17 @@ if (isset($_POST['editSessionBtn'])) {
 }
 
 if (isset($_POST['deleteSessionBtn'])) {
+	// get session details before deleting so we can log it properly
+	$sessionToDelete = getSessionByID($pdo, $_GET['session_id']);
+
 	$query = deleteSession($pdo, $_GET['session_id']);
 
 	if ($query) {
+		// log the delete action into activity_logs table
+		$fields = "pc_number, hours_rented, customer";
+		$oldValues = $sessionToDelete['pc_number'] . ", " . $sessionToDelete['hours_rented'] . ", " . $sessionToDelete['customer'];
+		insertActivityLog($pdo, $_SESSION['username'], "DELETE", "Rental Session", $_GET['session_id'], $fields, $oldValues, "-");
+
 		header("Location: ../viewRentalSessions.php?customer_id=" . $_GET['customer_id']);
 		exit();
 	} else {

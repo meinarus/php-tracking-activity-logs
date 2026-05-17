@@ -300,3 +300,28 @@ function searchSessions($pdo, $keyword, $customer_id)
 		return $stmt->fetchAll();
 	}
 }
+
+// Insert a new record into the activity_logs table to track user actions
+function insertActivityLog($pdo, $username, $action_type, $entity_type, $record_id, $field_changed, $old_value, $new_value)
+{
+	$sql = "INSERT INTO activity_logs (username, action_type, entity_type, record_id, field_changed, old_value, new_value) VALUES (?,?,?,?,?,?,?)";
+	$stmt = $pdo->prepare($sql);
+	$executeQuery = $stmt->execute([$username, $action_type, $entity_type, $record_id, $field_changed, $old_value, $new_value]);
+
+	if ($executeQuery) {
+		return true;
+	}
+}
+
+// Get all activity logs from the database ordered by most recent first
+function getAllActivityLogs($pdo)
+{
+	$sql = "SELECT * FROM activity_logs ORDER BY date_logged DESC";
+	$stmt = $pdo->prepare($sql);
+	$executeQuery = $stmt->execute();
+
+	if ($executeQuery) {
+		return $stmt->fetchAll();
+	}
+}
+

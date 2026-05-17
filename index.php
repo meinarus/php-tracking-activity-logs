@@ -27,6 +27,8 @@ if (!isset($_SESSION['username'])) {
 
 	<h1>Hello there, <?php echo $_SESSION['username']; ?>!</h1>
 	<a href="core/handleForms.php?logoutAUser=1">Logout</a>
+	<!-- link to the activity logs page so users can view all recorded actions -->
+	<a href="viewActivityLogs.php">View Activity Logs</a>
 
 	<h3>Users List</h3>
 	<ul>
