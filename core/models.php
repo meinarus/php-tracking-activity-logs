@@ -255,3 +255,48 @@ function deleteSession($pdo, $session_id)
 		return true;
 	}
 }
+
+// Search for customers by matching the keyword against username, first name, or last name
+function searchCustomers($pdo, $keyword)
+{
+	$sql = "SELECT * FROM customers 
+			WHERE username LIKE ? 
+			OR first_name LIKE ? 
+			OR last_name LIKE ? 
+			OR membership_status LIKE ?";
+	$stmt = $pdo->prepare($sql);
+	// wrap the keyword with % so it matches any part of the text
+	$searchTerm = "%" . $keyword . "%";
+	$executeQuery = $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $searchTerm]);
+
+	if ($executeQuery) {
+		return $stmt->fetchAll();
+	}
+}
+
+// Search for rental sessions by matching the keyword against pc number, hours rented, or customer name
+function searchSessions($pdo, $keyword, $customer_id)
+{
+	$sql = "SELECT 
+				rental_sessions.session_id AS session_id,
+				rental_sessions.pc_number AS pc_number,
+				rental_sessions.hours_rented AS hours_rented,
+				rental_sessions.added_by AS added_by,
+				rental_sessions.date_added AS date_added,
+				rental_sessions.updated_by AS updated_by,
+				rental_sessions.last_updated AS last_updated,
+				CONCAT(customers.first_name,' ',customers.last_name) AS customer
+			FROM rental_sessions
+			JOIN customers ON rental_sessions.customer_id = customers.customer_id
+			WHERE rental_sessions.customer_id = ?
+			AND (rental_sessions.pc_number LIKE ? 
+			OR rental_sessions.hours_rented LIKE ?)";
+	$stmt = $pdo->prepare($sql);
+	// wrap the keyword with % so it matches any part of the text
+	$searchTerm = "%" . $keyword . "%";
+	$executeQuery = $stmt->execute([$customer_id, $searchTerm, $searchTerm]);
+
+	if ($executeQuery) {
+		return $stmt->fetchAll();
+	}
+}

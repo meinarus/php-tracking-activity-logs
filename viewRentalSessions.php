@@ -34,6 +34,18 @@ if (!isset($_SESSION['username'])) {
 		</p>
 	</form>
 
+	<!-- search form for rental sessions: search by PC number or hours rented -->
+	<h3>Search Sessions</h3>
+	<form action="viewRentalSessions.php" method="GET" class="search-form">
+		<!-- pass customer_id as a hidden field so we stay on the same customer's page -->
+		<input type="hidden" name="customer_id" value="<?php echo $_GET['customer_id']; ?>">
+		<p>
+			<label for="search">Search by PC number or hours rented</label>
+			<input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+			<input type="submit" value="Search">
+		</p>
+	</form>
+
 	<table>
 		<tr>
 			<th>Session ID</th>
@@ -46,7 +58,15 @@ if (!isset($_SESSION['username'])) {
 			<th>Last Updated</th>
 			<th>Action</th>
 		</tr>
-		<?php $getSessionsByCustomer = getSessionsByCustomer($pdo, $_GET['customer_id']); ?>
+		<?php
+		// if a search keyword is provided, use searchSessions instead of getSessionsByCustomer
+		if (isset($_GET['search']) && !empty($_GET['search'])) {
+			$searchKeyword = sanitizeInput($_GET['search']);
+			$getSessionsByCustomer = searchSessions($pdo, $searchKeyword, $_GET['customer_id']);
+		} else {
+			$getSessionsByCustomer = getSessionsByCustomer($pdo, $_GET['customer_id']);
+		}
+		?>
 		<?php foreach ($getSessionsByCustomer as $row) { ?>
 			<tr>
 				<td><?php echo $row['session_id']; ?></td>

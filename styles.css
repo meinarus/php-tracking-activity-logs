@@ -220,3 +220,18 @@ h1[style*="color: red;"] {
   max-width: 450px;
   text-align: center;
 }
+
+/* search form styling to make it look like a search bar */
+.search-form {
+  max-width: 600px;
+}
+
+.search-form p {
+  flex-direction: row;
+  align-items: center;
+}
+
+.search-form input[type="submit"] {
+  width: auto;
+  margin-top: 0;
+}

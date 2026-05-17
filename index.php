@@ -58,7 +58,26 @@ if (!isset($_SESSION['username'])) {
 			<input type="submit" name="insertCustomerBtn">
 		</p>
 	</form>
-	<?php $getAllCustomers = getAllCustomers($pdo); ?>
+
+	<!-- search form for customers: submits a GET request so results show on this page -->
+	<h3>Search Customers</h3>
+	<form action="index.php" method="GET" class="search-form">
+		<p>
+			<label for="search">Search by username, name, or status</label>
+			<input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+			<input type="submit" value="Search">
+		</p>
+	</form>
+
+	<?php
+	// if a search keyword is provided, use searchCustomers instead of getAllCustomers
+	if (isset($_GET['search']) && !empty($_GET['search'])) {
+		$searchKeyword = sanitizeInput($_GET['search']);
+		$getAllCustomers = searchCustomers($pdo, $searchKeyword);
+	} else {
+		$getAllCustomers = getAllCustomers($pdo);
+	}
+	?>
 	<table>
 		<tr>
 			<th>Username</th>
