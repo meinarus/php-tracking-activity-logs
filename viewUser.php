@@ -18,7 +18,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="index.php">Return to home</a>
+	<nav>
+		<a href="index.php">Return to home</a>
+	</nav>
+
 	<?php $getUserByID = getUserByID($pdo, $_GET['user_id']); ?>
 	<h1>Username: <?php echo $getUserByID['username']; ?></h1>
 	<h1>First Name: <?php echo $getUserByID['first_name']; ?></h1>

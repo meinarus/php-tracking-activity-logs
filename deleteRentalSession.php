@@ -18,7 +18,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="viewRentalSessions.php?customer_id=<?php echo $_GET['customer_id']; ?>">Return to sessions</a>
+	<nav>
+		<a href="viewRentalSessions.php?customer_id=<?php echo $_GET['customer_id']; ?>">Return to sessions</a>
+	</nav>
+
 	<?php $getSessionByID = getSessionByID($pdo, $_GET['session_id']); ?>
 	<h1>Are you sure you want to delete this session?</h1>
 	<div class="card">

@@ -19,7 +19,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="index.php">Return to home</a>
+	<nav>
+		<a href="index.php">Return to home</a>
+	</nav>
+
 	<h1>Activity Logs</h1>
 
 	<!-- display all activity logs in a read-only table -->

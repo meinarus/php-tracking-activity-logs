@@ -18,7 +18,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="viewRentalSessions.php?customer_id=<?php echo $_GET['customer_id']; ?>">Return to sessions</a>
+	<nav>
+		<a href="viewRentalSessions.php?customer_id=<?php echo $_GET['customer_id']; ?>">Return to sessions</a>
+	</nav>
+
 	<h1>Edit the session!</h1>
 	<?php $getSessionByID = getSessionByID($pdo, $_GET['session_id']); ?>
 	<form action="core/handleForms.php?session_id=<?php echo $_GET['session_id']; ?>

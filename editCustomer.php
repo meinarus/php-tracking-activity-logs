@@ -18,7 +18,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="index.php">Return to home</a>
+	<nav>
+		<a href="index.php">Return to home</a>
+	</nav>
+
 	<?php $getCustomerByID = getCustomerByID($pdo, $_GET['customer_id']); ?>
 	<h1>Edit the customer!</h1>
 	<form action="core/handleForms.php?customer_id=<?php echo $_GET['customer_id']; ?>" method="POST">

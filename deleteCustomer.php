@@ -18,7 +18,10 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-	<a href="index.php">Return to home</a>
+	<nav>
+		<a href="index.php">Return to home</a>
+	</nav>
+
 	<h1>Are you sure you want to delete this customer?</h1>
 	<?php $getCustomerByID = getCustomerByID($pdo, $_GET['customer_id']); ?>
 	<div class="card">
