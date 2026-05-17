@@ -13,10 +13,12 @@ require_once 'core/handleForms.php';
 </head>
 
 <body>
+	<!-- display session message if there is one -->
 	<?php if (isset($_SESSION['message'])) { ?>
 		<h1 style="color: red;"><?php echo $_SESSION['message']; ?></h1>
 	<?php }
 	unset($_SESSION['message']); ?>
+	<!-- login form: sends data to handleForms.php via POST -->
 	<h1>Login Now!</h1>
 	<form action="core/handleForms.php" method="POST">
 		<p>
@@ -29,6 +31,7 @@ require_once 'core/handleForms.php';
 			<input type="submit" name="loginUserBtn">
 		</p>
 	</form>
+	<!-- link to register page for new users -->
 	<p>Don't have an account? You may register <a href="register.php">here</a></p>
 </body>
 

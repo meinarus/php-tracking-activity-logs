@@ -39,6 +39,7 @@ if (!isset($_SESSION['username'])) {
 			<th>New Value</th>
 			<th>Date Logged</th>
 		</tr>
+		<!-- loop through each log entry and display it in a row -->
 		<?php foreach ($getAllLogs as $row) { ?>
 			<tr>
 				<td><?php echo $row['log_id']; ?></td>

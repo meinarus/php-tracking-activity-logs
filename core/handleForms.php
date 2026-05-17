@@ -5,6 +5,7 @@ require_once 'models.php';
 require_once 'validate.php'; // import the sanitizeInput() function to prevent XSS
 
 
+// handle user registration form submission
 if (isset($_POST['registerUserBtn'])) {
 
 	// sanitize the inputs to prevent XSS before storing in the database
@@ -50,6 +51,7 @@ if (isset($_POST['registerUserBtn'])) {
 	}
 }
 
+// handle user login form submission
 if (isset($_POST['loginUserBtn'])) {
 
 	// sanitize the username input to prevent XSS
@@ -75,12 +77,14 @@ if (isset($_POST['loginUserBtn'])) {
 	}
 }
 
+// handle user logout by clearing the session and redirecting to login page
 if (isset($_GET['logoutAUser'])) {
-	unset($_SESSION['username']);
+	unset($_SESSION['username']); // remove the username from session to log them out
 	header('Location: ../login.php');
 	exit();
 }
 
+// handle inserting a new customer
 if (isset($_POST['insertCustomerBtn'])) {
 
 	// sanitize all customer inputs to prevent XSS
@@ -110,6 +114,7 @@ if (isset($_POST['insertCustomerBtn'])) {
 	}
 }
 
+// handle editing/updating a customer
 if (isset($_POST['editCustomerBtn'])) {
 	// sanitize all customer inputs to prevent XSS when editing
 	$username = sanitizeInput($_POST['username']);
@@ -168,6 +173,7 @@ if (isset($_POST['editCustomerBtn'])) {
 	}
 }
 
+// handle deleting a customer
 if (isset($_POST['deleteCustomerBtn'])) {
 	// get customer details before deleting so we can log it properly
 	$customerToDelete = getCustomerByID($pdo, $_GET['customer_id']);
@@ -187,6 +193,7 @@ if (isset($_POST['deleteCustomerBtn'])) {
 	}
 }
 
+// handle inserting a new rental session for a customer
 if (isset($_POST['insertNewSessionBtn'])) {
 	// sanitize session inputs to prevent XSS
 	$pcNumber = sanitizeInput($_POST['pcNumber']);
@@ -216,6 +223,7 @@ if (isset($_POST['insertNewSessionBtn'])) {
 	}
 }
 
+// handle editing/updating a rental session
 if (isset($_POST['editSessionBtn'])) {
 	// sanitize session inputs to prevent XSS when editing
 	$pcNumber = sanitizeInput($_POST['pcNumber']);
@@ -255,6 +263,7 @@ if (isset($_POST['editSessionBtn'])) {
 	}
 }
 
+// handle deleting a rental session
 if (isset($_POST['deleteSessionBtn'])) {
 	// get session details before deleting so we can log it properly
 	$sessionToDelete = getSessionByID($pdo, $_GET['session_id']);

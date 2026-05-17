@@ -2,6 +2,7 @@
 require_once 'core/models.php';
 require_once 'core/handleForms.php';
 
+// redirect to login page if the user is not logged in
 if (!isset($_SESSION['username'])) {
 	header("Location: login.php");
 	exit();
@@ -20,6 +21,7 @@ if (!isset($_SESSION['username'])) {
 <body>
 	<h1>Welcome To Internet Cafe Management System.</h1>
 
+	<!-- display session message if there is one -->
 	<?php if (isset($_SESSION['message'])) { ?>
 		<h1 style="color: red;"><?php echo $_SESSION['message']; ?></h1>
 	<?php }
@@ -32,6 +34,7 @@ if (!isset($_SESSION['username'])) {
 		<a href="viewActivityLogs.php">View Activity Logs</a>
 	</nav>
 
+	<!-- display all registered users as a list -->
 	<h3>Users List</h3>
 	<ul>
 		<?php $getAllUsers = getAllUsers($pdo); ?>
@@ -42,6 +45,7 @@ if (!isset($_SESSION['username'])) {
 		<?php } ?>
 	</ul>
 
+	<!-- form to add a new customer -->
 	<h2>Add new Customers!</h2>
 	<form action="core/handleForms.php" method="POST">
 		<p>
@@ -85,6 +89,7 @@ if (!isset($_SESSION['username'])) {
 	<?php if (isset($_GET['search']) && !empty($_GET['search'])) { ?>
 		<h3>Customers Results</h3>
 	<?php } ?>
+	<!-- table that displays all customers (or filtered results if searching) -->
 	<table>
 		<tr>
 			<th>Username</th>
@@ -97,6 +102,7 @@ if (!isset($_SESSION['username'])) {
 			<th>Last Updated</th>
 			<th>Action</th>
 		</tr>
+		<!-- loop through each customer and display their data in a row -->
 		<?php foreach ($getAllCustomers as $row) { ?>
 			<tr>
 				<td><?php echo $row['username']; ?></td>

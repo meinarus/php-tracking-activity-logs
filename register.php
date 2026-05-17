@@ -14,10 +14,12 @@ require_once 'core/handleForms.php';
 
 <body>
 	<h1>Register here!</h1>
+	<!-- display session message if there is one -->
 	<?php if (isset($_SESSION['message'])) { ?>
 		<h1 style="color: red;"><?php echo $_SESSION['message']; ?></h1>
 	<?php }
 	unset($_SESSION['message']); ?>
+	<!-- registration form: sends data to handleForms.php via POST -->
 	<form action="core/handleForms.php" method="POST">
 		<p>
 			<label for="username">Username</label>

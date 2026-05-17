@@ -2,6 +2,7 @@
 require_once 'core/models.php';
 require_once 'core/handleForms.php';
 
+// redirect to login page if the user is not logged in
 if (!isset($_SESSION['username'])) {
 	header("Location: login.php");
 	exit();
@@ -23,7 +24,9 @@ if (!isset($_SESSION['username'])) {
 	</nav>
 
 	<h1>Edit the session!</h1>
+	<!-- get the session data from the database so we can pre-fill the form -->
 	<?php $getSessionByID = getSessionByID($pdo, $_GET['session_id']); ?>
+	<!-- form sends data to handleForms.php with session_id and customer_id in the URL -->
 	<form action="core/handleForms.php?session_id=<?php echo $_GET['session_id']; ?>
 	&customer_id=<?php echo $_GET['customer_id']; ?>" method="POST">
 		<p>

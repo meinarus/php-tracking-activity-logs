@@ -2,6 +2,7 @@
 require_once 'core/models.php';
 require_once 'core/handleForms.php';
 
+// redirect to login page if the user is not logged in
 if (!isset($_SESSION['username'])) {
 	header("Location: login.php");
 	exit();
@@ -22,8 +23,10 @@ if (!isset($_SESSION['username'])) {
 		<a href="index.php">Return to home</a>
 	</nav>
 
+	<!-- get the user data from the database using the user_id from the URL -->
 	<?php $getUserByID = getUserByID($pdo, $_GET['user_id']); ?>
 	<h1>Username: <?php echo $getUserByID['username']; ?></h1>
+	<!-- display the user's details in a card -->
 	<div class="card">
 		<p><strong>First Name:</strong> <?php echo $getUserByID['first_name']; ?></p>
 		<p><strong>Last Name:</strong> <?php echo $getUserByID['last_name']; ?></p>

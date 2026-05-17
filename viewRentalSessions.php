@@ -2,6 +2,7 @@
 require_once 'core/models.php';
 require_once 'core/handleForms.php';
 
+// redirect to login page if the user is not logged in
 if (!isset($_SESSION['username'])) {
 	header("Location: login.php");
 	exit();
@@ -22,8 +23,10 @@ if (!isset($_SESSION['username'])) {
 		<a href="index.php">Return to home</a>
 	</nav>
 
+	<!-- get the customer info to display their username at the top -->
 	<?php $getAllInfoByCustomerID = getCustomerByID($pdo, $_GET['customer_id']); ?>
 	<h2>Username: <?php echo $getAllInfoByCustomerID['username']; ?></h2>
+	<!-- form to add a new rental session for this customer -->
 	<h2>Add New Session</h2>
 	<form action="core/handleForms.php?customer_id=<?php echo $_GET['customer_id']; ?>" method="POST">
 		<p>
@@ -49,6 +52,7 @@ if (!isset($_SESSION['username'])) {
 		</p>
 	</form>
 
+	<!-- table to display all rental sessions for this customer -->
 	<table>
 		<tr>
 			<th>Session ID</th>
@@ -70,6 +74,7 @@ if (!isset($_SESSION['username'])) {
 			$getSessionsByCustomer = getSessionsByCustomer($pdo, $_GET['customer_id']);
 		}
 		?>
+		<!-- loop through each session and display their data in a row -->
 		<?php foreach ($getSessionsByCustomer as $row) { ?>
 			<tr>
 				<td><?php echo $row['session_id']; ?></td>

@@ -2,6 +2,7 @@
 require_once 'core/models.php';
 require_once 'core/handleForms.php';
 
+// redirect to login page if the user is not logged in
 if (!isset($_SESSION['username'])) {
 	header("Location: login.php");
 	exit();
@@ -22,8 +23,10 @@ if (!isset($_SESSION['username'])) {
 		<a href="index.php">Return to home</a>
 	</nav>
 
+	<!-- get the customer data from the database so we can pre-fill the form -->
 	<?php $getCustomerByID = getCustomerByID($pdo, $_GET['customer_id']); ?>
 	<h1>Edit the customer!</h1>
+	<!-- form sends data to handleForms.php with customer_id in the URL -->
 	<form action="core/handleForms.php?customer_id=<?php echo $_GET['customer_id']; ?>" method="POST">
 		<p>
 			<label for="username">Username</label>

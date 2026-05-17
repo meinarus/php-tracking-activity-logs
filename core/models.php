@@ -1,14 +1,18 @@
 <?php
 
+// This function inserts a new user into the users table.
+// It first checks if the username already exists to avoid duplicates.
 function insertNewUser($pdo, $username, $first_name, $last_name, $date_of_birth, $password)
 {
 
+	// check if the username is already taken
 	$checkUserSql = "SELECT * FROM users WHERE username = ?";
 	$checkUserSqlStmt = $pdo->prepare($checkUserSql);
 	$checkUserSqlStmt->execute([$username]);
 
 	if ($checkUserSqlStmt->rowCount() == 0) {
 
+		// if username is available, insert the new user into the database
 		$sql = "INSERT INTO users (username, first_name, last_name, date_of_birth, password) VALUES(?,?,?,?,?)";
 		$stmt = $pdo->prepare($sql);
 		$executeQuery = $stmt->execute([$username, $first_name, $last_name, $date_of_birth, $password]);
@@ -24,8 +28,10 @@ function insertNewUser($pdo, $username, $first_name, $last_name, $date_of_birth,
 	}
 }
 
+// This function handles user login by checking the username and verifying the password.
 function loginUser($pdo, $username, $password)
 {
+	// find the user in the database by username
 	$sql = "SELECT * FROM users WHERE username=?";
 	$stmt = $pdo->prepare($sql);
 	$stmt->execute([$username]);
@@ -35,8 +41,9 @@ function loginUser($pdo, $username, $password)
 		$usernameFromDB = $userInfoRow['username'];
 		$passwordFromDB = $userInfoRow['password'];
 
+		// use password_verify to compare the entered password with the hashed one in the database
 		if (password_verify($password, $passwordFromDB)) {
-			$_SESSION['username'] = $usernameFromDB;
+			$_SESSION['username'] = $usernameFromDB; // store username in session so we know who is logged in
 			$_SESSION['message'] = "Login successful!";
 			return true;
 		} else {
@@ -49,6 +56,7 @@ function loginUser($pdo, $username, $password)
 	}
 }
 
+// This function gets all users from the users table.
 function getAllUsers($pdo)
 {
 	$sql = "SELECT * FROM users";
@@ -60,6 +68,7 @@ function getAllUsers($pdo)
 	}
 }
 
+// This function gets a single user by their user_id.
 function getUserByID($pdo, $user_id)
 {
 	$sql = "SELECT * FROM users WHERE user_id = ?";
@@ -71,6 +80,8 @@ function getUserByID($pdo, $user_id)
 	}
 }
 
+// This function inserts a new customer into the customers table.
+// It also records who added the customer using the session username.
 function insertCustomer(
 	$pdo,
 	$username,
@@ -78,7 +89,7 @@ function insertCustomer(
 	$last_name,
 	$membership_status,
 ) {
-	$current_user = $_SESSION['username'];
+	$current_user = $_SESSION['username']; // get the logged-in user to track who added this customer
 
 	$sql = "INSERT INTO customers (username, first_name, last_name, 
 		membership_status, added_by, updated_by) VALUES(?,?,?,?,?,?)";
@@ -98,6 +109,8 @@ function insertCustomer(
 	}
 }
 
+// This function updates an existing customer's details in the customers table.
+// It also records who made the update using the session username.
 function updateCustomer(
 	$pdo,
 	$username,
@@ -106,7 +119,7 @@ function updateCustomer(
 	$membership_status,
 	$customer_id
 ) {
-	$updated_by = $_SESSION['username'];
+	$updated_by = $_SESSION['username']; // track who updated this customer
 
 	$sql = "UPDATE customers
 				SET username = ?,
@@ -131,13 +144,17 @@ function updateCustomer(
 	}
 }
 
+// This function deletes a customer from the database.
+// It also deletes all rental sessions linked to this customer first to avoid errors.
 function deleteCustomer($pdo, $customer_id)
 {
+	// delete all rental sessions of this customer first (child records)
 	$deleteCustomerSession = "DELETE FROM rental_sessions WHERE customer_id = ?";
 	$deleteStmt = $pdo->prepare($deleteCustomerSession);
 	$executeDeleteQuery = $deleteStmt->execute([$customer_id]);
 
 	if ($executeDeleteQuery) {
+		// then delete the customer itself (parent record)
 		$sql = "DELETE FROM customers WHERE customer_id = ?";
 		$stmt = $pdo->prepare($sql);
 		$executeQuery = $stmt->execute([$customer_id]);
@@ -148,6 +165,7 @@ function deleteCustomer($pdo, $customer_id)
 	}
 }
 
+// This function gets all customers from the customers table.
 function getAllCustomers($pdo)
 {
 	$sql = "SELECT * FROM customers";
@@ -159,6 +177,7 @@ function getAllCustomers($pdo)
 	}
 }
 
+// This function gets a single customer by their customer_id.
 function getCustomerByID($pdo, $customer_id)
 {
 	$sql = "SELECT * FROM customers WHERE customer_id = ?";
@@ -170,6 +189,8 @@ function getCustomerByID($pdo, $customer_id)
 	}
 }
 
+// This function gets all rental sessions for a specific customer.
+// It uses a JOIN to also get the customer's full name from the customers table.
 function getSessionsByCustomer($pdo, $customer_id)
 {
 	$sql = "SELECT 
@@ -193,9 +214,11 @@ function getSessionsByCustomer($pdo, $customer_id)
 	}
 }
 
+// This function inserts a new rental session into the rental_sessions table.
+// It also records who added the session using the session username.
 function insertSession($pdo, $pc_number, $hours_rented, $customer_id)
 {
-	$current_user = $_SESSION['username'];
+	$current_user = $_SESSION['username']; // get the logged-in user to track who added this session
 	$sql = "INSERT INTO rental_sessions (pc_number, hours_rented, added_by, updated_by, customer_id) VALUES (?,?,?,?,?)";
 	$stmt = $pdo->prepare($sql);
 	$executeQuery = $stmt->execute([$pc_number, $hours_rented, $current_user, $current_user, $customer_id]);
@@ -205,6 +228,8 @@ function insertSession($pdo, $pc_number, $hours_rented, $customer_id)
 	}
 }
 
+// This function gets a single rental session by its session_id.
+// It uses a JOIN to also get the customer's full name.
 function getSessionByID($pdo, $session_id)
 {
 	$sql = "SELECT 
@@ -227,9 +252,11 @@ function getSessionByID($pdo, $session_id)
 	}
 }
 
+// This function updates an existing rental session's details.
+// It also records who made the update using the session username.
 function updateSession($pdo, $pc_number, $hours_rented, $session_id)
 {
-	$updated_by = $_SESSION['username'];
+	$updated_by = $_SESSION['username']; // track who updated this session
 
 	$sql = "UPDATE rental_sessions
 			SET pc_number = ?,
@@ -245,6 +272,7 @@ function updateSession($pdo, $pc_number, $hours_rented, $session_id)
 	}
 }
 
+// This function deletes a rental session from the database by its session_id.
 function deleteSession($pdo, $session_id)
 {
 	$sql = "DELETE FROM rental_sessions WHERE session_id = ?";
